@@ -5,12 +5,12 @@ namespace LetterConnector
         {
             var pairsFound = 0;
             var list = new LinkedList(input);
-            var itemCount = input.Length;
+            var maxSkip = input.Length - 2;
 
-            for (int skip = 0; skip <= itemCount - 2; skip++)
+            for (int skip = 0; skip <= maxSkip; skip++)
             {
-                var (newPairs, removed, _) = FindPairs(list.First, list, itemCount, skip);
-                itemCount -= removed;
+                var (newPairs, removed, _) = FindPairs(list.First, list, maxSkip, skip);
+                maxSkip -= removed;
                 pairsFound += newPairs;
             }
 
@@ -30,24 +30,20 @@ namespace LetterConnector
                 {
                     if (MatchingCharacter(current.Value) == next.Value)
                     {
-                        (current, bool rewound) = RemoveSection(current, next, list);
-                        
                         removed += 2 + skip;
                         pairsFound++;
-                        
-                        if (rewound){
-                            // decrement cursor before the gap
-                            currentIndex--;
-                            // decrement maximum distance by # items removed
-                            maxDistance -= 2 + skip;
+                        if (TryRemoveSection(current, next, list)){
+                            
+                            // we've rewound
+                            if (current.Previous is not null){
+                                current = current.Previous;
+                                currentIndex--;
+                                maxDistance -= (2 + skip);
 
-                            // if we've removed a gap, find pairs that could now cross that gap
-                            // 'current' is the place before the gap
-                            if (current is not null)
-                            {
+                                // check whether we can make any new pairs now that the (skip + 2) items ahead are gone
                                 for (int i = 0; i <= skip; i++)
                                 {
-                                    // maxDistance passed here is 0 - this means we only ever try to find pairs from 'currnet' onwards
+                                    // maxDistance passed here is 0 - this means we only ever try to find pairs from 'current' onwards
                                     // with various values of i up to skip
                                     (var additionalPairs, var innerRemoved, var ptr) = FindPairs(current, list, 0, i);
                                     if (additionalPairs > 0){
@@ -58,10 +54,14 @@ namespace LetterConnector
                                     }
                                 }
                             }
+                            // we've fast-forwarded
+                            else if (next.Next is not null){
+                                current = next.Next;
+                                currentIndex += (2 + skip);
+                            }
                         }
                         else{
-                            // increment cursor past the gap
-                            currentIndex += 2 + skip;
+                            break;
                         }
                     }
                     else
@@ -79,21 +79,20 @@ namespace LetterConnector
             return (pairsFound, removed, current);
         }
 
-        static (LinkedListNode? cursor, bool rewind) RemoveSection(LinkedListNode start, LinkedListNode end, LinkedList list)
+        static bool TryRemoveSection(LinkedListNode start, LinkedListNode end, LinkedList list)
         {
             // if we can rewind (we're not at the start of the list)
             if (start.Previous is not null)
             {
-                var newStart = start.Previous;
-
                 // remove the gap
-                newStart.Next = end.Next;
-                if (newStart.Next is not null)
+                start.Previous.Next = end.Next;
+                
+                if (end.Next is not null)
                 {
-                    newStart.Next.Previous = newStart;
+                    end.Next.Previous = start.Previous;
                 }
 
-                return (newStart, true);
+                return true;
             }
 
             // we're removing a section from the start of the list
@@ -101,19 +100,19 @@ namespace LetterConnector
             {
                 end.Next.Previous = null;
                 list.First = end.Next;
-                return (end.Next, false);
+                return true;
             }
 
-            // start.previous is null, end.next is null
-            return (null, false);
+            // start.previous is null, end.next is null - we have no more
+            return false;
         }
 
         static LinkedListNode? GetNodeAfterSkip(LinkedListNode current, int skip = 0)
         {
             var next = current.Next;
-            for (int i = 0; i < skip; i++)
-            {
+            while(skip > 0){
                 next = next?.Next;
+                skip--;
             }
 
             return next;
@@ -145,18 +144,15 @@ namespace LetterConnector
 
     public class LinkedList
     {
-        public LinkedList(IEnumerable<char> items)
+        public LinkedList(string str)
         {
-            First = new LinkedListNode(items.First());
+            First = new LinkedListNode(str[0]);
             var previous = First;
-            foreach (var item in items.Skip(1))
+            for (int i = 1; i < str.Length; i++)
             {
-                var newNode = new LinkedListNode(item);
-                if (previous is not null)
-                {
-                    newNode.Previous = previous;
-                    previous.Next = newNode;
-                }
+                var newNode = new LinkedListNode(str[i]);
+                newNode.Previous = previous;
+                previous.Next = newNode;
                 previous = newNode;
             }
         }
