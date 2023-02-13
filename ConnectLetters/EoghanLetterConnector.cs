@@ -1,6 +1,7 @@
-namespace LetterConnector
+namespace ConnectLetters
 {
-    public class Utilities{
+    public class Eoghan
+    {
         public static int ProcessInput(string input)
         {
             var pairsFound = 0;

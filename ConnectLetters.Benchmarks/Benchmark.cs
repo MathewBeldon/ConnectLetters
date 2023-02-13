@@ -3,17 +3,28 @@
 namespace ConnectLetters.Benchmarks
 {
     [MemoryDiagnoser]
-    public class ConnectLetters
+    public class ConnectLettersBenchmark
     {
         [Arguments("ABABABAB")]
         [Arguments("AAAAAAAA")]
         [Arguments("BABBYYAYAAB")]
         [Arguments("XYABXYXYAB")]
         [Arguments("AXXBXYABXAYB")]
-        [Benchmark(Description = "Connect Letters")]
-        public void Run(string connections)
+        [Benchmark(Description = "Eoghan's Connect Letters")]
+        public void RunEoghan(string connections)
         {
-            LetterConnector.Utilities.ProcessInput(connections);
+            Eoghan.ProcessInput(connections);
+        }
+
+        [Arguments("ABABABAB")]
+        [Arguments("AAAAAAAA")]
+        [Arguments("BABBYYAYAAB")]
+        [Arguments("XYABXYXYAB")]
+        [Arguments("AXXBXYABXAYB")]
+        [Benchmark(Description = "Matt's Connect Letters")]
+        public void RunMatt(string connections)
+        {
+            Matt.ProcessInput(connections);
         }
     }
 }
