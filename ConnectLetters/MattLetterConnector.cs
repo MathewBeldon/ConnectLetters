@@ -4,7 +4,6 @@
     {
         public static int ProcessInput(string connections)
         {
-            //get all pairs
             var matches = new List<(int, int)>();
 
             for (int i = 0; i < connections.Length; i++)
@@ -27,7 +26,7 @@
                 }
             }
 
-            return matches.Count();
+            return matches.Count;
 
             int FindSurroundingPairs(int lhs, int rhs)
             {
