@@ -95,9 +95,9 @@ many pairs into the smallest space possible
 public int Pairwise(string connections)
 {
     var matches = new List<(int, int)>();
+
     for (int i = 0; i < connections.Length; i++)
     {
-        var latestMatches = new List<(int, int)>();
         for (int j = 0; j < connections.Length; j++)
         {
             var lhs = j;
@@ -126,6 +126,7 @@ public int Pairwise(string connections)
             matches.Add((lhs, rhs));
             FindSurroundingPairs(lhs - 1, rhs + 1);
         }
+
         return rhs - 1;
     }
 
@@ -138,6 +139,16 @@ public int Pairwise(string connections)
 
         return false;
 
+        bool IsMatch()
+        {
+            if (connections[lhs] - 1 == connections[rhs]
+                || connections[lhs] + 1 == connections[rhs])
+            {
+                return true;
+            }
+            return false;
+        }
+
         bool IsIntersect()
         {
             for (int x = 0; x < matches.Count; x++)
@@ -147,16 +158,6 @@ public int Pairwise(string connections)
                 {
                     return true;
                 }
-            }
-            return false;
-        }
-
-        bool IsMatch()
-        {
-            if (connections[lhs] - 1 == connections[rhs]
-                || connections[lhs] + 1 == connections[rhs])
-            {
-                return true;
             }
             return false;
         }
@@ -176,18 +177,18 @@ B A X B A A X Y B A X X B Y Y B Y A A A X A Y B Y B X A A X Y X X Y A A X A Y Y 
                                   |___________________________________________________________________________________|                                                                                 
 ```
 
-|                   Method |          connections |       Median | Allocated |
-|------------------------- |--------------------- |-------------:|----------:|
-| 'Matt's Connect Letters' |             AAAAAAAA |     86.72 ns |     288 B |
-| 'Matt's Connect Letters' |                 AABB |     45.02 ns |     216 B |
-| 'Matt's Connect Letters' |                  ABA |     28.20 ns |     184 B |
-| 'Matt's Connect Letters' |             ABABABAB |    133.68 ns |     344 B |
-| 'Matt's Connect Letters' |                 ABBA |     47.24 ns |     216 B |
-| 'Matt's Connect Letters' |         ABBAXYYXXXBA |    248.82 ns |     560 B |
-| 'Matt's Connect Letters' |         AXXBXYABXAYB |    228.09 ns |     560 B |
-| 'Matt's Connect Letters' |          BABBYYAYAAB |    185.04 ns |     440 B |
-| 'Matt's Connect Letters' |  BAXB(...)XXXA [100] | 39,284.16 ns |    4344 B |
-| 'Matt's Connect Letters' |         XBXAYABXBYAY |    292.38 ns |     560 B |
-| 'Matt's Connect Letters' |           XYABXYXYAB |    185.14 ns |     496 B |
-| 'Matt's Connect Letters' | XYABX(...)XBYAY [34] |  2,189.33 ns |    1416 B |
-| 'Matt's Connect Letters' | YAAAA(...)AAAAX [34] |  1,234.61 ns |    1176 B |
+|          connections |         Mean | Allocated |
+|--------------------- |-------------:|----------:|
+|             AAAAAAAA |     63.65 ns |      32 B |
+|                 AABB |     30.88 ns |      88 B |
+|                  ABA |     17.85 ns |      88 B |
+|             ABABABAB |    106.20 ns |      88 B |
+|                 ABBA |     30.80 ns |      88 B |
+|         ABBAXYYXXXBA |    212.63 ns |     176 B |
+|         AXXBXYABXAYB |    215.03 ns |     176 B |
+|          BABBYYAYAAB |    169.22 ns |      88 B |
+|  BAXB(...)XXXA [100] | 37,187.90 ns |    1144 B |
+|         XBXAYABXBYAY |    241.20 ns |     176 B |
+|           XYABXYXYAB |    150.27 ns |     176 B |
+| XYABX(...)XBYAY [34] |  2,100.28 ns |     328 B |
+| YAAAA(...)AAAAX [34] |  1,154.00 ns |      88 B |

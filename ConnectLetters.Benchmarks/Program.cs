@@ -6,7 +6,9 @@ namespace ConnectLetters.Benchmarks
     {
         public static void Main()
         {
-            _ = BenchmarkRunner.Run(typeof(Program).Assembly);
+            //_ = BenchmarkRunner.Run(typeof(Program).Assembly);
+
+            ChatGPT.ProcessInput("AXBY");
         }
     }
 }

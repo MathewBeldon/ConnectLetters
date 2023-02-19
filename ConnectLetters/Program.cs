@@ -1,9 +1,10 @@
-﻿var input = File.ReadAllLines("./letters");
+﻿var inputs = File.ReadAllLines("./letters");
 
-foreach(var inputs in input){
-    Console.WriteLine(ConnectLetters.Eoghan.ProcessInput(inputs));
-}
-foreach (var inputs in input)
+foreach(var input in inputs)
 {
-    Console.WriteLine(ConnectLetters.Matt.ProcessInput(inputs));
+    Console.WriteLine($"ChatGPT: {input} {ConnectLetters.ChatGPT.ProcessInput(input)}");
+}
+foreach (var input in inputs)
+{
+    Console.WriteLine($"Answers: {input} {ConnectLetters.Matt.ProcessInput(input)}");
 }
