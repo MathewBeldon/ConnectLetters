@@ -8,16 +8,16 @@
 
             for (int i = 0; i < connections.Length; i++)
             {
-                var latestMatches = new List<(int, int)>();
                 for (int j = 0; j < connections.Length; j++)
                 {
-                    if (j + i + 1 >= connections.Length)
+                    var lhs = j;
+                    var rhs = j + i + 1;
+
+                    if (rhs >= connections.Length)
                     {
                         break;
                     }
 
-                    var lhs = j;
-                    var rhs = j + i + 1;
                     if (Check(lhs, rhs))
                     {
                         matches.Add((lhs, rhs));
@@ -49,6 +49,16 @@
 
                 return false;
 
+                bool IsMatch()
+                {
+                    if (connections[lhs] - 1 == connections[rhs]
+                        || connections[lhs] + 1 == connections[rhs])
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+
                 bool IsIntersect()
                 {
                     for (int x = 0; x < matches.Count; x++)
@@ -58,16 +68,6 @@
                         {
                             return true;
                         }
-                    }
-                    return false;
-                }
-
-                bool IsMatch()
-                {
-                    if (connections[lhs] - 1 == connections[rhs]
-                        || connections[lhs] + 1 == connections[rhs])
-                    {
-                        return true;
                     }
                     return false;
                 }
